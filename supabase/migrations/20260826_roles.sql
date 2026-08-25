@@ -1,0 +1,12 @@
+create type public.user_role as enum ('admin','reviewer');
+create table public.profiles(id uuid primary key references auth.users(id) on delete cascade,full_name text,role public.user_role not null default 'reviewer',created_at timestamptz not null default now(),updated_at timestamptz not null default now());
+alter table public.profiles enable row level security;
+create policy "users can read own profile" on public.profiles for select to authenticated using(id=auth.uid());
+create policy "admins can read profiles" on public.profiles for select to authenticated using(exists(select 1 from public.profiles p where p.id=auth.uid() and p.role='admin'));
+create or replace function public.my_role() returns public.user_role language sql stable security definer set search_path=public as $$ select role from public.profiles where id=auth.uid() $$;
+create or replace function public.is_admin() returns boolean language sql stable security definer set search_path=public as $$ select public.my_role()='admin' $$;
+create policy "admins can manage profiles" on public.profiles for all to authenticated using(public.is_admin()) with check(public.is_admin());
+create policy "reviewers can update cases" on public.cases for update to authenticated using(public.my_role() in ('admin','reviewer')) with check(public.my_role() in ('admin','reviewer'));
+create policy "reviewers can manage children" on public.children for all to authenticated using(public.my_role() in ('admin','reviewer')) with check(public.my_role() in ('admin','reviewer'));
+drop policy if exists "authenticated users can manage amount rules" on public.amount_rules;
+create policy "admins can manage amount rules" on public.amount_rules for all to authenticated using(public.is_admin()) with check(public.is_admin());
