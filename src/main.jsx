@@ -1,77 +1,24 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
+import { supabase } from './lib/supabase';
 import './styles.css';
 
-const stats = [
-  ['إجمالي الحالات', '0'],
-  ['كفالة أيتام', '0'],
-  ['مساعدات', '0'],
-  ['الأطفال المكفولون', '0'],
-];
-
-function App() {
-  const [active, setActive] = useState('dashboard');
-
-  const nav = [
-    ['dashboard', 'لوحة التحكم', '⌂'],
-    ['cases', 'الحالات', '◉'],
-    ['add', 'إضافة حالة', '+'],
-    ['waiting', 'قائمة الانتظار', '≡'],
-    ['children', 'الأطفال', '♙'],
-    ['amounts', 'المبالغ', '▣'],
-    ['reports', 'التقارير', '▤'],
-  ];
-
-  return (
-    <div className="app">
-      <header className="topbar">
-        <div>
-          <div className="eyebrow">إدارة الكفالة والمساعدات</div>
-          <h1>نظام الكفالة</h1>
-        </div>
-        <button className="profile">المدير</button>
-      </header>
-
-      <div className="layout">
-        <aside className="sidebar">
-          <div className="brand">كفالة</div>
-          {nav.map(([id, label, icon]) => (
-            <button key={id} className={active === id ? 'nav active' : 'nav'} onClick={() => setActive(id)}>
-              <span>{icon}</span>{label}
-            </button>
-          ))}
-        </aside>
-
-        <main className="main">
-          {active === 'dashboard' && <Dashboard />}
-          {active === 'add' && <AddCase />}
-          {active !== 'dashboard' && active !== 'add' && <Empty title={nav.find(x => x[0] === active)?.[1]} />}
-        </main>
-      </div>
-
-      <nav className="mobile-nav">
-        {nav.slice(0, 5).map(([id, label, icon]) => (
-          <button key={id} className={active === id ? 'mobile active' : 'mobile'} onClick={() => setActive(id)}>
-            <span>{icon}</span><small>{label}</small>
-          </button>
-        ))}
-      </nav>
-    </div>
-  );
+function App(){
+ const [session,setSession]=useState(null),[active,setActive]=useState('dashboard'),[cases,setCases]=useState([]),[selected,setSelected]=useState(null),[loading,setLoading]=useState(true);
+ useEffect(()=>{ if(!supabase){setLoading(false);return;} supabase.auth.getSession().then(({data})=>{setSession(data.session);setLoading(false)}); const {data:{subscription}}=supabase.auth.onAuthStateChange((_e,s)=>setSession(s)); return()=>subscription.unsubscribe(); },[]);
+ useEffect(()=>{if(session) loadCases()},[session]);
+ async function loadCases(){const {data}=await supabase.from('cases').select('*,children(*)').order('created_at',{ascending:false});setCases(data||[])}
+ if(loading)return <div className="center">جاري التحميل...</div>;
+ if(!session)return <Login />;
+ const nav=[['dashboard','لوحة التحكم','⌂'],['cases','الحالات','◉'],['add','إضافة حالة','+'],['waiting','قائمة الانتظار','≡'],['children','الأطفال','♙'],['amounts','المبالغ','▣'],['reports','التقارير','▤']];
+ return <div className="app"><header className="topbar"><div><div className="eyebrow">إدارة الكفالة والمساعدات</div><h1>نظام الكفالة</h1></div><button className="profile" onClick={()=>supabase.auth.signOut()}>خروج</button></header><div className="layout"><aside className="sidebar"><div className="brand">كفالة</div>{nav.map(([id,label,icon])=><button key={id} className={active===id?'nav active':'nav'} onClick={()=>setActive(id)}><span>{icon}</span>{label}</button>)}</aside><main className="main">{active==='dashboard'&&<Dashboard cases={cases}/>} {active==='cases'&&<Cases cases={cases} onSelect={setSelected}/>} {active==='add'&&<AddCase onSaved={()=>{loadCases();setActive('cases')}}/>} {active==='waiting'&&<Waiting cases={cases} onSelect={setSelected}/>} {active!=='dashboard'&&active!=='cases'&&active!=='add'&&active!=='waiting'&&<Empty title={nav.find(x=>x[0]===active)?.[1]}/>}</main></div>{selected&&<FamilyCard item={selected} onClose={()=>setSelected(null)}/>}<nav className="mobile-nav">{nav.slice(0,5).map(([id,label,icon])=><button key={id} className={active===id?'mobile active':'mobile'} onClick={()=>setActive(id)}><span>{icon}</span><small>{label}</small></button>)}</nav></div>
 }
-
-function Dashboard() {
-  return <>
-    <section className="welcome"><div><p>مرحبًا بك 👋</p><h2>لوحة التحكم</h2><span>ملخص سريع لأهم بيانات الكفالة والمساعدات.</span></div><button className="primary">+ إضافة حالة</button></section>
-    <section className="stats">{stats.map(([label, value]) => <article className="stat" key={label}><span>{label}</span><strong>{value}</strong></article>)}</section>
-    <section className="panel"><div className="panel-head"><h3>آخر الحالات</h3><button>عرض الكل</button></div><div className="empty">لا توجد حالات مضافة بعد</div></section>
-  </>;
-}
-
-function AddCase() {
-  return <section className="form-panel"><div className="panel-head"><div><h2>إضافة حالة جديدة</h2><p>أدخل بيانات الأم الأساسية ثم أضف الأبناء إذا كانت الحالة كفالة أيتام.</p></div></div><div className="form-grid"><label>اسم الأم *<input placeholder="اكتب اسم الأم" /></label><label>رقم الهاتف *<input inputMode="tel" placeholder="01xxxxxxxxx" /></label><label className="wide">العنوان *<input placeholder="العنوان بالتفصيل" /></label><label>نوع الحالة *<select defaultValue=""><option value="" disabled>اختر النوع</option><option>مساعدات</option><option>كفالة أيتام</option></select></label><label className="wide">ملاحظات <textarea placeholder="ملاحظات اختيارية للمراجعة والاستحقاق" /></label></div><div className="notice">سيتم حساب المبلغ تلقائيًا وفق إعدادات المبالغ وعدد الأبناء المؤهلين.</div><button className="primary save">حفظ الحالة</button></section>;
-}
-
-function Empty({ title }) { return <section className="panel"><h2>{title}</h2><div className="empty">سيتم بناء هذه الصفحة في المرحلة التالية.</div></section>; }
-
-createRoot(document.getElementById('root')).render(<App />);
+function Login(){const[email,setEmail]=useState(''),[password,setPassword]=useState(''),[error,setError]=useState(''),[busy,setBusy]=useState(false);async function submit(e){e.preventDefault();setBusy(true);setError('');const {error}=await supabase.auth.signInWithPassword({email,password});if(error)setError('بيانات الدخول غير صحيحة أو الحساب غير مفعل.');setBusy(false)}return <div className="login"><div className="login-card"><div className="brand">كفالة</div><h1>تسجيل الدخول</h1><p>سجّل الدخول لإدارة الحالات.</p><form onSubmit={submit}><label>البريد الإلكتروني<input type="email" required value={email} onChange={e=>setEmail(e.target.value)} /></label><label>كلمة المرور<input type="password" required value={password} onChange={e=>setPassword(e.target.value)} /></label>{error&&<div className="error">{error}</div>}<button className="primary" disabled={busy}>{busy?'جارٍ الدخول...':'دخول'}</button></form></div></div>}
+function Dashboard({cases}){const orphan=cases.filter(x=>x.case_type==='orphan_sponsorship').length,aid=cases.filter(x=>x.case_type==='aid').length,children=cases.reduce((n,x)=>n+(x.children?.length||0),0);return <><section className="welcome"><div><p>مرحبًا بك 👋</p><h2>لوحة التحكم</h2><span>ملخص سريع لأهم بيانات الكفالة والمساعدات.</span></div></section><section className="stats"><article className="stat"><span>إجمالي الحالات</span><strong>{cases.length}</strong></article><article className="stat"><span>كفالة أيتام</span><strong>{orphan}</strong></article><article className="stat"><span>مساعدات</span><strong>{aid}</strong></article><article className="stat"><span>الأطفال</span><strong>{children}</strong></article></section><section className="panel"><div className="panel-head"><h3>آخر الحالات</h3></div>{cases.length?<div className="case-list">{cases.slice(0,5).map(x=><button key={x.id} onClick={()=>document.dispatchEvent(new CustomEvent('select-case',{detail:x}))}>{x.mother_name}<span>{x.case_type==='aid'?'مساعدات':'كفالة أيتام'}</span></button>)}</div>:<div className="empty">لا توجد حالات مضافة بعد</div>}</section></>}
+function Cases({cases,onSelect}){return <section className="panel"><div className="panel-head"><h2>الحالات</h2><span>{cases.length} حالة</span></div>{cases.length?<div className="case-list">{cases.map(x=><button key={x.id} onClick={()=>onSelect(x)}><b>{x.mother_name}</b><span>{x.address} · {x.case_type==='aid'?'مساعدات':`كفالة · ${x.children?.length||0} أبناء`}</span>{x.notes&&<em>🔔</em>}</button>)}</div>:<div className="empty">لا توجد حالات.</div>}</section>}
+function Waiting({cases,onSelect}){const waiting=cases.filter(x=>x.status==='waiting').sort((a,b)=>(b.children?.length||0)-(a.children?.length||0));return <section className="panel"><div className="panel-head"><h2>قائمة الانتظار</h2><span>{waiting.length} حالة</span></div>{waiting.length?<div className="case-list">{waiting.map(x=><button key={x.id} onClick={()=>onSelect(x)}><b>{x.mother_name}</b><span>الأولوية: {x.children?.length||0} أبناء</span>{x.notes&&<em>🔔</em>}</button>)}</div>:<div className="empty">لا توجد حالات في الانتظار.</div>}</section>}
+function AddCase({onSaved}){const [form,setForm]=useState({mother_name:'',phone:'',address:'',case_type:'',notes:''}),[children,setChildren]=useState([]),[busy,setBusy]=useState(false),[error,setError]=useState('');const update=(k,v)=>setForm({...form,[k]:v});function addChild(){setChildren([...children,{name:'',gender:'',birth_date:''}])}function changeChild(i,k,v){const a=[...children];a[i]={...a[i],[k]:v};setChildren(a)}async function save(e){e.preventDefault();setError('');if(form.case_type==='orphan_sponsorship'&&(!children.length||children.some(c=>!c.name||!c.gender||!c.birth_date))){setError('يجب إدخال بيانات كل طفل كاملة.');return}setBusy(true);const {data,error}=await supabase.from('cases').insert({...form,created_by:(await supabase.auth.getUser()).data.user.id,status:'active'}).select().single();if(error){setError(error.message);setBusy(false);return}if(children.length){const {error:ce}=await supabase.from('children').insert(children.map(c=>({...c,case_id:data.id,gender:c.gender})));if(ce){setError(ce.message);setBusy(false);return}}setBusy(false);onSaved()}return <section className="form-panel"><div className="panel-head"><div><h2>إضافة حالة جديدة</h2><p>الحقول المعلّمة بنجمة إلزامية.</p></div></div><form onSubmit={save}><div className="form-grid"><label>اسم الأم *<input required value={form.mother_name} onChange={e=>update('mother_name',e.target.value)} /></label><label>رقم الهاتف *<input required inputMode="tel" value={form.phone} onChange={e=>update('phone',e.target.value)} /></label><label className="wide">العنوان *<input required value={form.address} onChange={e=>update('address',e.target.value)} /></label><label>نوع الحالة *<select required value={form.case_type} onChange={e=>update('case_type',e.target.value)}><option value="">اختر النوع</option><option value="aid">مساعدات</option><option value="orphan_sponsorship">كفالة أيتام</option></select></label><label className="wide">ملاحظات <textarea value={form.notes} onChange={e=>update('notes',e.target.value)} /></label></div>{form.case_type==='orphan_sponsorship'&&<div className="children-box"><div className="panel-head"><h3>الأبناء</h3><button type="button" onClick={addChild}>+ إضافة طفل</button></div>{children.map((c,i)=><div className="child-row" key={i}><input required placeholder="اسم الطفل" value={c.name} onChange={e=>changeChild(i,'name',e.target.value)}/><select required value={c.gender} onChange={e=>changeChild(i,'gender',e.target.value)}><option value="">النوع</option><option value="male">ذكر</option><option value="female">أنثى</option></select><input required type="date" value={c.birth_date} onChange={e=>changeChild(i,'birth_date',e.target.value)}/></div>)}</div>}{error&&<div className="error">{error}</div>}<button className="primary save" disabled={busy}>{busy?'جاري الحفظ...':'حفظ الحالة'}</button></form></section>}
+function FamilyCard({item,onClose}){return <div className="overlay" onClick={onClose}><div className="family-card" onClick={e=>e.stopPropagation()}><button className="close" onClick={onClose}>×</button><h2>{item.mother_name}</h2><p>📞 {item.phone}</p><p>📍 {item.address}</p><div className="tag">{item.case_type==='aid'?'مساعدات':'كفالة أيتام'}</div>{item.children?.length>0&&<><h3>الأبناء ({item.children.length})</h3><div className="children-table">{item.children.map(c=><div key={c.id}><b>{c.name}</b><span>{c.gender==='male'?'ذكر':'أنثى'}</span><span>{age(c.birth_date)} سنة</span></div>)}</div></>}{item.notes&&<div className="note">⚠️ <b>ملاحظة</b><br/>{item.notes}</div>}</div></div>}
+function age(date){const d=new Date(date),n=new Date();let a=n.getFullYear()-d.getFullYear();if(n.getMonth()<d.getMonth()||(n.getMonth()===d.getMonth()&&n.getDate()<d.getDate()))a--;return a}
+function Empty({title}){return <section className="panel"><h2>{title}</h2><div className="empty">سيتم بناء هذه الصفحة في المرحلة التالية.</div></section>}
+createRoot(document.getElementById('root')).render(<App/>);
