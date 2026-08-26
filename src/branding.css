@@ -1,15 +1,15 @@
 /* Brand layout */
-.topbar{position:relative;display:flex;align-items:center;justify-content:center;min-height:96px;padding:0 270px;background:#fff}
+.topbar{position:relative;display:flex;align-items:center;justify-content:center;min-height:116px;padding:0 330px;background:#fff}
 .topbar:before{content:none!important;display:none!important}
 
 /* شعار التطبيق — يمين */
-.topbar-app-logo{position:absolute;right:24px;top:50%;transform:translateY(-50%);width:235px;height:82px;background:url('../kafala logo dark.png') center/contain no-repeat;background-repeat:no-repeat}
+.topbar-app-logo{position:absolute;right:28px;top:50%;transform:translateY(-50%);width:310px;height:100px;background:url('../kafala logo dark.png') center/contain no-repeat;background-repeat:no-repeat}
 
 /* شعار المسجد — المنتصف */
-.topbar-mosque-logo{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:290px;height:84px;background:url('../mosque-logo2.png') center/contain no-repeat;background-repeat:no-repeat}
+.topbar-mosque-logo{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:390px;height:105px;background:url('../mosque-logo2.png') center/contain no-repeat;background-repeat:no-repeat}
 
 /* معلومات الحساب — يسار */
-.top-user{position:absolute;left:24px;top:50%;transform:translateY(-50%);display:flex;align-items:center;gap:9px;white-space:nowrap}
+.top-user{position:absolute;left:28px;top:50%;transform:translateY(-50%);display:flex;align-items:center;gap:9px;white-space:nowrap}
 .top-user b{font-size:11px;background:#d5d3c6;color:#30271b;padding:5px 9px;border-radius:20px}
 .top-user .profile{margin:0;background:#30271b;color:#d5d3c6;border:1px solid #30271b}
 .topbar-info{display:none}
@@ -17,19 +17,19 @@
 
 @media(prefers-color-scheme:dark){.topbar-app-logo{background-image:url('../kafala logo light.png')}}
 
-@media(max-width:1100px){
-  .topbar{min-height:90px;padding:0 225px}
-  .topbar-app-logo{right:18px;width:195px;height:72px}
-  .topbar-mosque-logo{width:245px;height:76px}
-  .top-user{left:18px;gap:6px}
+@media(max-width:1200px){
+  .topbar{min-height:108px;padding:0 280px}
+  .topbar-app-logo{right:20px;width:270px;height:88px}
+  .topbar-mosque-logo{width:330px;height:92px}
+  .top-user{left:20px;gap:6px}
   .top-user>span{display:none}
 }
 
 @media(max-width:760px){
-  .topbar{min-height:72px;padding:0 110px}
-  .topbar-app-logo{right:8px;width:120px;height:52px}
-  .topbar-mosque-logo{width:155px;height:56px}
-  .top-user{left:8px}
+  .topbar{min-height:88px;padding:0 125px}
+  .topbar-app-logo{right:7px;width:150px;height:66px}
+  .topbar-mosque-logo{width:195px;height:68px}
+  .top-user{left:7px}
   .top-user b{display:none}
   .top-user .profile{font-size:11px;padding:7px 10px}
 }
