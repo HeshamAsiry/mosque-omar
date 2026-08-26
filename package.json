@@ -1,8 +1,8 @@
 {
-  "name": "kafala-system",
-  "private": true,
-  "version": "0.2.0",
-  "type": "module",
-  "scripts": {"dev":"vite","build":"node scripts/fix-build.mjs && node scripts/fix-archive.mjs && vite build","preview":"vite preview"},
-  "dependencies": {"@supabase/supabase-js":"latest","@vitejs/plugin-react":"latest","vite":"latest","react":"latest","react-dom":"latest"}
+  "name":"kafala-system",
+  "private":true,
+  "version":"0.2.0",
+  "type":"module",
+  "scripts":{"dev":"vite","build":"node scripts/fix-build.mjs && vite build","preview":"vite preview"},
+  "dependencies":{"@supabase/supabase-js":"latest","@vitejs/plugin-react":"latest","vite":"latest","react":"latest","react-dom":"latest"}
 }
