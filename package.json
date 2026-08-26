@@ -3,7 +3,6 @@
   "private":true,
   "version":"0.2.0",
   "type":"module","scripts": {
-  "build": "node scripts/fix-build.mjs && node scripts/fix-initial-load.mjs && vite build"
-}
+  "build": "node scripts/fix-build.mjs && node scripts/fix-initial-load.mjs && vite build"}
   "dependencies":{"@supabase/supabase-js":"latest","@vitejs/plugin-react":"latest","vite":"latest","react":"latest","react-dom":"latest"}
 }
