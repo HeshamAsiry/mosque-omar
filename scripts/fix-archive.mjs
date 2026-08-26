@@ -1,30 +1,20 @@
 import fs from 'node:fs';
-
 const file='src/main.jsx';
 let s=fs.readFileSync(file,'utf8');
 
 if(!s.includes('function ArchiveCases(')){
-  const archiveFn=`function ArchiveCases({cases,select}){const list=cases.filter(c=>c.status==='archived').sort((a,b)=>new Date(b.deleted_at||0)-new Date(a.deleted_at||0));return <section className="panel"><div className="panel-head"><div><h2>أرشيف الحالات</h2><p>الحالات المحذوفة محفوظة هنا مع تاريخ الحذف وبيانات من أضافها ومن حذفها.</p></div><span>{list.length} حالة</span></div><div className="case-list">{list.length===0?<div className="empty">لا توجد حالات مؤرشفة.</div>:list.map(c=><button key={c.id}onClick={()=>select(c)}><b>{c.mother_name}</b><span>{c.case_type==='aid'?'مساعدات':'كفالة أيتام'} · تم الحذف: {c.deleted_at?new Date(c.deleted_at).toLocaleString('ar-EG'): '—'}</span></button>)}</div></section>}`;
-  s=s.replace('function Children(',archiveFn+'\nfunction Children(');
+ const archiveFn=`function ArchiveCases({cases,select}){const list=cases.filter(c=>c.status==='archived').sort((a,b)=>new Date(b.deleted_at||0)-new Date(a.deleted_at||0));return <section className="panel"><div className="panel-head"><div><h2>أرشيف الحالات</h2><p>الحالات المحذوفة محفوظة هنا مع تاريخ الحذف وبيانات من أضافها ومن حذفها.</p></div><span>{list.length} حالة</span></div><div className="case-list">{list.length===0?<div className="empty">لا توجد حالات مؤرشفة.</div>:list.map(c=><button key={c.id}onClick={()=>select(c)}><b>{c.mother_name}</b><span>{c.case_type==='aid'?'مساعدات':'كفالة أيتام'} · تم الحذف: {c.deleted_at?new Date(c.deleted_at).toLocaleString('ar-EG'):'—'}</span></button>)}</div></section>}`;
+ s=s.replace('function Children(',archiveFn+'\nfunction Children(');
 }
-
-// Add archive to navigation.
 s=s.replace("['external','التوزيع الخارجي','◇']];","['external','التوزيع الخارجي','◇'],['archive','أرشيف الحالات','▱']];");
-// Ensure admin-only amount/user items remain after archive.
-s=s.replace("if(isAdmin)nav.push(['amounts','المبالغ','▣'],['users','المستخدمون','♟']);","if(isAdmin)nav.push(['amounts','المبالغ','▣'],['users','المستخدمون','♟']);");
-// Render archive page.
 if(!s.includes("page==='archive'&&<ArchiveCases"))s=s.replace("{page==='users'&&isAdmin&&<Users currentUserId={session.user.id}/>","{page==='archive'&&<ArchiveCases cases={cases}select={setSelected}/>} {page==='users'&&isAdmin&&<Users currentUserId={session.user.id}/>");
-
-// Archive instead of hard-delete for case actions when a delete handler exists.
 s=s.replace(/await supabase\.from\('cases'\)\.delete\(\)\.eq\('id',c\.id\)/g,"await supabase.from('cases').update({status:'archived',deleted_at:new Date().toISOString(),deleted_by:(await supabase.auth.getUser()).data.user?.id,updated_at:new Date().toISOString()}).eq('id',c.id)");
 s=s.replace(/supabase\.from\('cases'\)\.delete\(\)\.eq\('id',c\.id\)/g,"supabase.from('cases').update({status:'archived',deleted_at:new Date().toISOString(),deleted_by:(await supabase.auth.getUser()).data.user?.id,updated_at:new Date().toISOString()}).eq('id',c.id)");
-
-// Keep archived cases out of normal calculations/lists.
-s=s.replace("const active=cases.filter(c=>c.status==='active'),waiting=cases.filter(c=>c.status==='waiting')","const active=cases.filter(c=>c.status==='active'),waiting=cases.filter(c=>c.status==='waiting'),archived=cases.filter(c=>c.status==='archived')");
-s=s.replace("<article className=\"stat\"><span>الأطفال المسجلون</span>","<article className=\"stat\"><span>الأرشيف</span><strong>{archived.length}</strong></article><article className=\"stat\"><span>الأطفال المسجلون</span>");
-
-// Display audit metadata in family cards when those fields exist.
-s=s.replace("<div className=\"tag\">", "<div className=\"audit-meta\"><span>أضاف الحالة: <b>{c.created_by_name||c.created_by||'غير مسجل'}</b></span>{c.status==='archived'&&<span>حذف الحالة: <b>{c.deleted_by_name||c.deleted_by||'غير مسجل'}</b> · {c.deleted_at?new Date(c.deleted_at).toLocaleString('ar-EG'):'—'}</span>}</div><div className=\"tag\">");
-
+if(!s.includes('audit-meta'))s=s.replace('<div className="tag">','<div className="audit-meta"><span>أضاف الحالة: <b>{c.created_by_name||c.created_by||\'غير مسجل\'}</b></span>{c.status===\'archived\'&&<span>حذف الحالة: <b>{c.deleted_by_name||c.deleted_by||\'غير مسجل\'}</b> · {c.deleted_at?new Date(c.deleted_at).toLocaleString(\'ar-EG\'):\'—\'}</span>}</div><div className="tag">');
+s=s.replace(/supabase\.from\('cases'\)\.insert\(\{/g,"supabase.from('cases').insert({created_by:(await supabase.auth.getUser()).data.user?.id||null,");
+const casesFn=`function Cases({cases,amounts,select}){const[q,setQ]=useState('');const list=cases.filter(c=>c.status==='active'&&(c.mother_name+' '+c.phone+' '+c.address).toLowerCase().includes(q.toLowerCase()));async function remove(c){if(!confirm('هل تريد نقل هذه الحالة إلى الأرشيف؟'))return;const{data:{user}}=await supabase.auth.getUser();const{error}=await supabase.from('cases').update({status:'archived',deleted_at:new Date().toISOString(),deleted_by:user?.id||null,updated_at:new Date().toISOString()}).eq('id',c.id);if(error){alert(error.message);return}await audit('archive','case',c.id,{mother_name:c.mother_name});location.reload()}return <section className="panel"><div className="panel-head"><div><h2>الحالات النشطة</h2><p>الحالات التي تصرف شهريًا حاليًا.</p></div><span>{list.length} حالة</span></div><input className="search-input"placeholder="بحث باسم الأم أو الهاتف أو العنوان..."value={q}onChange={e=>setQ(e.target.value)}/><div className="case-list">{list.map(c=><div className="case-row"key={c.id}><button className="case-card"onClick={()=>select(c)}><b>{c.mother_name}</b><span>{c.address} · {c.case_type==='aid'?'مساعدات':'كفالة أيتام'} · {money(caseAmount(c,amounts))}</span>{c.notes&&<em>⚠️</em>}</button><button className="danger-action"onClick={()=>remove(c)}>حذف</button></div>)}</div></section>}`;
+s=s.replace(/function Cases\([\s\S]*?\nfunction Waiting\(/,casesFn+'\nfunction Waiting(');
+const waitingFn=`function Waiting({cases,amounts,select,refresh}){const list=[...cases.filter(c=>c.status==='waiting')].sort((a,b)=>priority(b)-priority(a)||new Date(a.created_at)-new Date(b.created_at));async function activate(e,c){e.stopPropagation();const{error}=await supabase.from('cases').update({status:'active',updated_at:new Date().toISOString()}).eq('id',c.id);if(error){alert(error.message);return}await audit('activate','case',c.id,{from:'waiting',to:'active'});refresh()}async function remove(e,c){e.stopPropagation();if(!confirm('هل تريد نقل هذه الحالة إلى الأرشيف؟'))return;const{data:{user}}=await supabase.auth.getUser();const{error}=await supabase.from('cases').update({status:'archived',deleted_at:new Date().toISOString(),deleted_by:user?.id||null,updated_at:new Date().toISOString()}).eq('id',c.id);if(error){alert(error.message);return}await audit('archive','case',c.id,{mother_name:c.mother_name});refresh()}return <section className="panel"><div className="panel-head"><div><h2>قائمة الانتظار</h2><p>الأولوية: 5+ ← 4 ← 3 ← 2 ← 1 ← بدون أطفال.</p></div><span>{list.length} حالة</span></div><div className="waiting-list">{list.map((c,i)=><div className="waiting-item"key={c.id}><button className="waiting-card"onClick={()=>select(c)}><b>#{i+1} · {c.mother_name}</b><span>{c.address} · {priorityLabel(priority(c))} · {money(caseAmount(c,amounts))}</span>{c.notes&&<em>⚠️</em>}</button><button className="primary waiting-action"onClick={e=>activate(e,c)}>إدخال للحالات النشطة</button><button className="danger-action waiting-delete"onClick={e=>remove(e,c)}>حذف</button></div>)}</div></section>}`;
+s=s.replace(/function Waiting\([\s\S]*?\nfunction Children\(/,waitingFn+'\nfunction Children(');
 fs.writeFileSync(file,s);
-console.log('archive patch applied');
+console.log('archive workflow patched');
