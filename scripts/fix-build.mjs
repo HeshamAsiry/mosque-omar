@@ -28,6 +28,3 @@ function Children`;
 source = source.replace(waitingPattern, waitingReplacement);
 
 fs.writeFileSync(path, source);
-`;
-
-fs.writeFileSync(path, source);
