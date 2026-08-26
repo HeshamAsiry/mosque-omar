@@ -1,0 +1,10 @@
+/* Brand layout: mosque logo on the left, Kafala logo on the right */
+.topbar{position:relative;display:flex;align-items:center;justify-content:center;min-height:76px;padding:0 190px}
+.topbar:before{content:none!important;display:none!important}
+.topbar-app-logo{position:absolute;right:30px;top:50%;transform:translateY(-50%);width:150px;height:52px;background:url('../kafala logo dark.png') center/contain no-repeat;background-repeat:no-repeat}
+.topbar-mosque-logo{position:absolute;left:30px;top:50%;transform:translateY(-50%);width:180px;height:58px;background:url('../mosque-logo.png') center/contain no-repeat;background-repeat:no-repeat}
+.topbar-info{text-align:center}
+.sidebar>.brand{display:none}
+@media(prefers-color-scheme:dark){.topbar-app-logo{background-image:url('../kafala logo light.png')}}
+@media(max-width:900px){.topbar{padding:0 145px}.topbar-app-logo{right:18px;width:120px;height:46px}.topbar-mosque-logo{left:18px;width:145px;height:48px}}
+@media(max-width:760px){.topbar{min-height:68px;padding:0 95px}.topbar-app-logo{right:12px;width:78px;height:40px}.topbar-mosque-logo{left:12px;width:86px;height:40px}.topbar-info h1{font-size:15px}.topbar-info .eyebrow{display:none}}
