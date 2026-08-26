@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "node scripts/fix-build.mjs && node scripts/fix-initial-load.mjs && node scripts/fix-admin-meta.mjs && node scripts/fix-case-filters.mjs && vite build",
+    "build": "node scripts/fix-build.mjs && node scripts/fix-initial-load.mjs && node scripts/fix-admin-meta.mjs && node scripts/fix-case-filters.mjs && node scripts/fix-branding.mjs && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
