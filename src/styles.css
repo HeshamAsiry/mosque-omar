@@ -16,6 +16,6 @@
 
 /* Mosque branding */
 .brand{font-size:0;width:100%;height:82px;padding:0 10px 20px;background-image:url('../mosque-logo.png');background-repeat:no-repeat;background-position:center top;background-size:contain}
-.login-card .brand{height:112px;padding:0;margin:0 auto 12px;background-size:contain;background-position:center}
+.login-card .brand{height:128px;padding:0;margin:0 auto 12px;background-size:contain;background-position:center}
 .topbar:before{content:'';width:42px;height:42px;flex:0 0 42px;background:url('../mosque-logo.png') center/contain no-repeat;margin-left:14px;order:3}
-@media(max-width:760px){.login-card .brand{height:95px}.topbar:before{width:36px;height:36px;flex-basis:36px;margin-left:8px}.brand{height:70px;padding-bottom:14px}}
+@media(max-width:760px){.login-card .brand{height:105px}.topbar:before{width:36px;height:36px;flex-basis:36px;margin-left:8px}.brand{height:70px;padding-bottom:14px}}
