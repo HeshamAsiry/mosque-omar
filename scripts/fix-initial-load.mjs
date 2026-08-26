@@ -1,0 +1,11 @@
+import fs from 'node:fs';
+const path='src/main.jsx';
+let source=fs.readFileSync(path,'utf8');
+const old="useEffect(()=>{if(!session)return;loadProfile();loadCases();loadAmounts();const ch=";
+const next="useEffect(()=>{if(!session)return;(async()=>{await loadProfile();await loadCases();await loadAmounts()})();const ch=";
+if(source.includes(old)) source=source.replace(old,next);
+const oldLoad="async function loadCases(){const{data}=await supabase.from('cases').select('*,children(*)').order('created_at',{ascending:false});setCases(data||[])}";
+const newLoad="async function loadCases(){const{data,error}=await supabase.from('cases').select('*,children(*)').order('created_at',{ascending:false});if(error){console.error('Failed to load cases:',error);return}setCases(data||[])}";
+if(source.includes(oldLoad)) source=source.replace(oldLoad,newLoad);
+fs.writeFileSync(path,source);
+console.log('initial cases load patched');
