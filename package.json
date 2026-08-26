@@ -2,7 +2,8 @@
   "name":"kafala-system",
   "private":true,
   "version":"0.2.0",
-  "type":"module",
-  "scripts":{"dev":"vite","build":"node scripts/fix-build.mjs && vite build","preview":"vite preview"},
+  "type":"module","scripts": {
+  "build": "node scripts/fix-build.mjs && node scripts/fix-initial-load.mjs && vite build"
+}
   "dependencies":{"@supabase/supabase-js":"latest","@vitejs/plugin-react":"latest","vite":"latest","react":"latest","react-dom":"latest"}
 }
