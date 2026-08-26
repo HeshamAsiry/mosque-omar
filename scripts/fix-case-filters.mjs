@@ -1,13 +1,43 @@
 import fs from 'node:fs';
+
 const path='src/main.jsx';
 let source=fs.readFileSync(path,'utf8');
-function replaceFn(name,next,body){const s=source.indexOf(`function ${name}(`);if(s<0)return false;const e=source.indexOf(`function ${next}(`,s);if(e<0)return false;source=source.slice(0,s)+body+'\n'+source.slice(e);return true}
-const Filter=`const Filter=({value,setValue})=><div className="case-filters"><button type="button" className={value==='all'?'filter active':'filter'} onClick={()=>setValue('all')}>الكل</button><button type="button" className={value==='aid'?'filter active':'filter'} onClick={()=>setValue('aid')}>مساعدات</button><button type="button" className={value==='orphan_sponsorship'?'filter active':'filter'} onClick={()=>setValue('orphan_sponsorship')}>كفالة أيتام</button></div>;`;
-const casesFn=`${Filter}
-function Cases({cases,amounts,select,refresh}){const[q,setQ]=useState(''),[type,setType]=useState('all'),[profiles,setProfiles]=useState({});const list=cases.filter(c=>c.status==='active'&&(type==='all'||c.case_type===type)&&(c.mother_name+' '+(c.phone||'')+' '+(c.address||'')).toLowerCase().includes(q.toLowerCase()));useEffect(()=>{supabase.from('profiles').select('user_id,full_name').then(({data})=>setProfiles(Object.fromEntries((data||[]).map(x=>[x.user_id,x.full_name||'بدون اسم']))))},[]);return <section className="panel"><div className="panel-head"><div><h2>الحالات النشطة</h2><p>الحالات التي تصرف شهريًا حاليًا.</p></div><span>{list.length} حالة</span></div><div className="list-toolbar"><input className="search-input"placeholder="بحث باسم الأم أو الهاتف أو العنوان..."value={q}onChange={e=>setQ(e.target.value)}/><Filter value={type} setValue={setType}/></div><div className="case-list">{list.map(c=><button className="case-card"key={c.id}onClick={()=>select(c)}><b>{c.mother_name}</b><span>{c.address||'—'} · {c.case_type==='aid'?'مساعدات':'كفالة أيتام'} · {money(caseAmount(c,amounts))}</span><small className="creator-line">أضيفت بواسطة: {profiles[c.created_by]||c.created_by||'غير معروف'}</small></button>)}</div></section>}`;
-replaceFn('Cases','Waiting',casesFn);
-const waitingFn=`function Waiting({cases,amounts,select,refresh}){const[type,setType]=useState('all');const list=[...cases.filter(c=>c.status==='waiting'&&(type==='all'||c.case_type===type))].sort((a,b)=>priority(b)-priority(a)||new Date(a.created_at)-new Date(b.created_at));return <section className="panel"><div className="panel-head"><div><h2>قائمة الانتظار</h2><p>الأولوية: 5+ ← 4 ← 3 ← 2 ← 1 ← بدون أطفال.</p></div><span>{list.length} حالة</span></div><Filter value={type} setValue={setType}/><div className="waiting-list">{list.map((c,i)=><button className="waiting-card"key={c.id}onClick={()=>select(c)}><b>#{i+1} · {c.mother_name}</b><span>{c.address||'—'} · {priorityLabel(priority(c))} · {money(caseAmount(c,amounts))}</span></button>)}</div></section>`;
-replaceFn('Waiting','Children',waitingFn);
-const archiveFn=`function Archive({cases,amounts,refresh}){const[type,setType]=useState('all'),list=cases.filter(c=>c.status==='archived'&&(type==='all'||c.case_type===type)).sort((a,b)=>new Date(b.deleted_at||0)-new Date(a.deleted_at||0));return <section className="panel"><div className="panel-head"><div><h2>أرشيف الحالات</h2><p>كل الحالات المؤرشفة.</p></div><span>{list.length} حالة</span></div><Filter value={type} setValue={setType}/><div className="archive-list">{list.length===0?<div className="empty">لا توجد حالات في الأرشيف.</div>:list.map(c=><div className="archive-item"key={c.id}><div className="archive-card"><b>{c.mother_name}</b><span>{c.case_type==='aid'?'مساعدات':'كفالة أيتام'} · {money(caseAmount(c,amounts))}</span></div></div>)}</div></section>`;
-replaceFn('Archive','Dashboard',archiveFn);
-fs.writeFileSync(path,source);console.log('case filters patched');
+
+const filter=`<div className="case-filters"><button type="button" className={type==='all'?'filter active':'filter'} onClick={()=>setType('all')}>الكل</button><button type="button" className={type==='aid'?'filter active':'filter'} onClick={()=>setType('aid')}>مساعدات</button><button type="button" className={type==='orphan_sponsorship'?'filter active':'filter'} onClick={()=>setType('orphan_sponsorship')}>كفالة أيتام</button></div>`;
+
+// Active cases: add a type filter without replacing the whole component.
+source=source.replace(
+  "function Cases({cases,amounts,select,refresh}){const[q,setQ]=useState(''),[profiles,setProfiles]=useState({});",
+  "function Cases({cases,amounts,select,refresh}){const[q,setQ]=useState(''),[type,setType]=useState('all'),[profiles,setProfiles]=useState({});"
+);
+source=source.replace(
+  "cases.filter(c=>c.status==='active'&&(c.mother_name+' '+(c.phone||'')+' '+(c.address||'')).toLowerCase().includes(q.toLowerCase()))",
+  "cases.filter(c=>c.status==='active'&&(type==='all'||c.case_type===type)&&(c.mother_name+' '+(c.phone||'')+' '+(c.address||'')).toLowerCase().includes(q.toLowerCase()))"
+);
+source=source.replace(
+  '<input className="search-input"placeholder="بحث باسم الأم أو الهاتف أو العنوان..."value={q}onChange={e=>setQ(e.target.value)}/><div className="case-list">',
+  `<div className="list-toolbar"><input className="search-input"placeholder="بحث باسم الأم أو الهاتف أو العنوان..."value={q}onChange={e=>setQ(e.target.value)}/>${filter}</div><div className="case-list">`
+);
+
+// Waiting list: add the same filter.
+source=source.replace(
+  "function Waiting({cases,amounts,select,refresh}){const list=[...cases.filter(c=>c.status==='waiting')].sort",
+  "function Waiting({cases,amounts,select,refresh}){const[type,setType]=useState('all');const list=[...cases.filter(c=>c.status==='waiting'&&(type==='all'||c.case_type===type))].sort"
+);
+source=source.replace(
+  '<div className="panel-head"><div><h2>قائمة الانتظار</h2><p>الأولوية: 5+ ← 4 ← 3 ← 2 ← 1 ← بدون أطفال.</p></div><span>{list.length} حالة</span></div><div className="waiting-list">',
+  `<div className="panel-head"><div><h2>قائمة الانتظار</h2><p>الأولوية: 5+ ← 4 ← 3 ← 2 ← 1 ← بدون أطفال.</p></div><span>{list.length} حالة</span></div>${filter}<div className="waiting-list">`
+);
+
+// Archive: add the same filter while preserving the archive metadata/actions.
+source=source.replace(
+  "function Archive({cases,amounts,refresh}){const list=cases.filter(c=>c.status==='archived')",
+  "function Archive({cases,amounts,refresh}){const[type,setType]=useState('all');const list=cases.filter(c=>c.status==='archived'&&(type==='all'||c.case_type===type))"
+);
+source=source.replace(
+  '<div className="panel-head"><div><h2>أرشيف الحالات</h2><p>كل الحالات المؤرشفة مع بيانات الإضافة والحذف.</p></div><span>{list.length} حالة</span></div><div className="archive-list">',
+  `<div className="panel-head"><div><h2>أرشيف الحالات</h2><p>كل الحالات المؤرشفة مع بيانات الإضافة والحذف.</p></div><span>{list.length} حالة</span></div>${filter}<div className="archive-list">`
+);
+
+fs.writeFileSync(path,source);
+console.log('case filters patched safely');
