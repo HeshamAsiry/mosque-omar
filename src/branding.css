@@ -21,21 +21,21 @@
 .topbar-mosque-logo {
   position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
   width: 380px; height: 112px;
-  background: url('../mosque-logo2.png') center / 330px 330px no-repeat;
+  background: url('../mosque-logo.png') center / 330px 330px no-repeat;
   overflow: visible;
 }
 
 .topbar-info { display: none; }
 .sidebar > .brand { display: none; }
 
-/* شعار المسجد في شاشة تسجيل الدخول — كبير وواضح */
+/* شعار المسجد الأول في شاشة تسجيل الدخول — كبير وواضح */
 .login-card > .brand {
   width: 220px;
   height: 220px;
   margin: 0 auto 20px;
   font-size: 0;
   line-height: 0;
-  background: url('../mosque-logo2.png') center / contain no-repeat;
+  background: url('../mosque-logo.png') center / contain no-repeat;
 }
 
 /* معلومات الحساب — يسار */
