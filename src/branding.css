@@ -1,35 +1,79 @@
-/* Brand layout */
-.topbar{position:relative;display:flex;align-items:center;justify-content:center;min-height:128px;padding:0 360px;background:#fff;overflow:visible}
-.topbar:before{content:none!important;display:none!important}
+/* ======================================================================
+   الهوية البصرية — شعار التطبيق (يمين) + شعار المسجد (منتصف) + المستخدم (يسار)
+   شعار المسجد يُستخدم فقط في شاشة تسجيل الدخول (وليس هنا).
+   ====================================================================== */
 
-/* شعار التطبيق — يمين */
-.topbar-app-logo{position:absolute;right:26px;top:50%;transform:translateY(-50%);width:340px;height:112px;background:url('../kafala logo dark.png') center/contain no-repeat;background-repeat:no-repeat}
-
-/* شعار المسجد — المنتصف: الصورة الأصلية مربعة، لذلك نكبّرها داخل مساحة الهيدر حتى يظهر الشعار نفسه بوضوح */
-.topbar-mosque-logo{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:420px;height:120px;background:url('../mosque-logo2.png') center/360px 360px no-repeat;background-repeat:no-repeat;overflow:visible}
-
-/* معلومات الحساب — يسار */
-.top-user{position:absolute;left:26px;top:50%;transform:translateY(-50%);display:flex;align-items:center;gap:9px;white-space:nowrap}
-.top-user b{font-size:11px;background:#d5d3c6;color:#30271b;padding:5px 9px;border-radius:20px}
-.top-user .profile{margin:0;background:#30271b;color:#d5d3c6;border:1px solid #30271b}
-.topbar-info{display:none}
-.sidebar>.brand{display:none}
-
-@media(prefers-color-scheme:dark){.topbar-app-logo{background-image:url('../kafala logo light.png')}}
-
-@media(max-width:1200px){
-  .topbar{min-height:116px;padding:0 310px}
-  .topbar-app-logo{right:18px;width:290px;height:98px}
-  .topbar-mosque-logo{width:360px;height:108px;background-size:320px 320px}
-  .top-user{left:18px;gap:6px}
-  .top-user>span{display:none}
+.topbar {
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+  min-height: 118px;
+  padding: 0 320px;
+  background: var(--surface, #fffdf9);
+  overflow: visible;
 }
 
-@media(max-width:760px){
-  .topbar{min-height:92px;padding:0 145px}
-  .topbar-app-logo{right:5px;width:155px;height:68px}
-  .topbar-mosque-logo{width:205px;height:78px;background-size:220px 220px}
-  .top-user{left:6px}
-  .top-user b{display:none}
-  .top-user .profile{font-size:11px;padding:7px 10px}
+.topbar-app-logo {
+  position: absolute; right: 26px; top: 50%; transform: translateY(-50%);
+  width: 300px; height: 100px;
+  background: url('../kafala logo dark.png') center / contain no-repeat;
+}
+
+/* الصورة الأصلية مربعة، لذلك نكبّرها داخل مساحة الهيدر حتى يظهر الشعار بوضوح */
+.topbar-mosque-logo {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  width: 380px; height: 112px;
+  background: url('../mosque-logo2.png') center / 330px 330px no-repeat;
+  overflow: visible;
+}
+
+.topbar-info { display: none; }
+.sidebar > .brand { display: none; }
+
+/* معلومات الحساب — يسار */
+.top-user {
+  position: absolute; left: 26px; top: 50%; transform: translateY(-50%);
+  display: flex; align-items: center; gap: 10px; white-space: nowrap;
+}
+.top-user b { font-size: 12px; background: var(--tan, #d9d6c8); color: var(--ink, #2f2618); padding: 6px 11px; border-radius: 20px; }
+.top-user .profile { margin: 0; background: var(--ink, #2f2618); color: var(--tan, #d9d6c8); border: 1px solid var(--ink, #2f2618); }
+
+/* الوضع الداكن للجهاز — نستخدم نسخة الشعار الفاتحة */
+@media (prefers-color-scheme: dark) {
+  .topbar-app-logo { background-image: url('../kafala logo light.png'); }
+}
+
+/* شعار الشريط الجانبي — نفس شعار التطبيق، أصغر */
+.sidebar-app-logo {
+  width: 100%; height: 64px; margin-bottom: 8px;
+  background: url('../kafala logo light.png') center / contain no-repeat;
+}
+
+/* ===================== شاشات متوسطة ===================== */
+@media (max-width: 1200px) {
+  .topbar { min-height: 104px; padding: 0 270px; }
+  .topbar-app-logo { right: 18px; width: 250px; height: 86px; }
+  .topbar-mosque-logo { width: 320px; height: 98px; background-size: 280px 280px; }
+  .top-user { left: 18px; gap: 8px; }
+}
+
+/* ===================== الهاتف — شعارات واضحة، غير شفافة، بدون تداخل ===================== */
+@media (max-width: 760px) {
+  .topbar {
+    min-height: 108px; height: 108px; padding: 0;
+    display: block; overflow: hidden;
+  }
+  .topbar-app-logo {
+    right: 12px; top: 54px; width: 118px; height: 76px;
+    transform: translateY(-50%); background-size: contain; opacity: 1;
+  }
+  .topbar-mosque-logo {
+    left: 50%; top: 54px; width: 156px; height: 100px;
+    transform: translate(-50%, -50%); background-size: 150px 150px;
+  }
+  .top-user {
+    left: 12px; top: 54px; transform: translateY(-50%);
+    display: flex; z-index: 3;
+  }
+  .top-user b { display: none; }
+  .top-user .profile { font-size: 11px; padding: 8px 12px; opacity: 1; }
 }
