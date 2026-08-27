@@ -18,17 +18,18 @@
   background: url('../kafala logo dark.png') center / contain no-repeat;
 }
 
+/* لوجو المسجد داخل التصميم: نحافظ على اللوجو الأصلي وحجمه */
 .topbar-mosque-logo {
   position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
   width: 380px; height: 112px;
-  background: url('../mosque-logo.png') center / 330px 330px no-repeat;
+  background: url('../mosque-logo2.png') center / 330px 330px no-repeat;
   overflow: visible;
 }
 
 .topbar-info { display: none; }
 .sidebar > .brand { display: none; }
 
-/* شعار المسجد الأول في شاشة تسجيل الدخول — كبير وواضح */
+/* اللوجو الأول في شاشة تسجيل الدخول — كبير وواضح */
 .login-card > .brand {
   width: 220px;
   height: 220px;
@@ -38,7 +39,6 @@
   background: url('../mosque-logo.png') center / contain no-repeat;
 }
 
-/* معلومات الحساب — يسار */
 .top-user {
   position: absolute; left: 26px; top: 50%; transform: translateY(-50%);
   display: flex; align-items: center; gap: 10px; white-space: nowrap;
