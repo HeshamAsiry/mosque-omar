@@ -1,6 +1,6 @@
 /* ======================================================================
    الهوية البصرية — شعار التطبيق (يمين) + شعار المسجد (منتصف) + المستخدم (يسار)
-   شعار المسجد يُستخدم فقط في شاشة تسجيل الدخول (وليس هنا).
+   شعار المسجد يُستخدم في شاشة تسجيل الدخول والهيدر.
    ====================================================================== */
 
 .topbar {
@@ -18,7 +18,6 @@
   background: url('../kafala logo dark.png') center / contain no-repeat;
 }
 
-/* الصورة الأصلية مربعة، لذلك نكبّرها داخل مساحة الهيدر حتى يظهر الشعار بوضوح */
 .topbar-mosque-logo {
   position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
   width: 380px; height: 112px;
@@ -29,6 +28,16 @@
 .topbar-info { display: none; }
 .sidebar > .brand { display: none; }
 
+/* شعار المسجد في شاشة تسجيل الدخول — كبير وواضح */
+.login-card > .brand {
+  width: 220px;
+  height: 220px;
+  margin: 0 auto 20px;
+  font-size: 0;
+  line-height: 0;
+  background: url('../mosque-logo2.png') center / contain no-repeat;
+}
+
 /* معلومات الحساب — يسار */
 .top-user {
   position: absolute; left: 26px; top: 50%; transform: translateY(-50%);
@@ -37,18 +46,15 @@
 .top-user b { font-size: 12px; background: var(--tan, #d9d6c8); color: var(--ink, #2f2618); padding: 6px 11px; border-radius: 20px; }
 .top-user .profile { margin: 0; background: var(--ink, #2f2618); color: var(--tan, #d9d6c8); border: 1px solid var(--ink, #2f2618); }
 
-/* الوضع الداكن للجهاز — نستخدم نسخة الشعار الفاتحة */
 @media (prefers-color-scheme: dark) {
   .topbar-app-logo { background-image: url('../kafala logo light.png'); }
 }
 
-/* شعار الشريط الجانبي — نفس شعار التطبيق، أصغر */
 .sidebar-app-logo {
   width: 100%; height: 64px; margin-bottom: 8px;
   background: url('../kafala logo light.png') center / contain no-repeat;
 }
 
-/* ===================== شاشات متوسطة ===================== */
 @media (max-width: 1200px) {
   .topbar { min-height: 104px; padding: 0 270px; }
   .topbar-app-logo { right: 18px; width: 250px; height: 86px; }
@@ -56,7 +62,6 @@
   .top-user { left: 18px; gap: 8px; }
 }
 
-/* ===================== الهاتف — شعارات واضحة، غير شفافة، بدون تداخل ===================== */
 @media (max-width: 760px) {
   .topbar {
     min-height: 108px; height: 108px; padding: 0;
@@ -76,4 +81,10 @@
   }
   .top-user b { display: none; }
   .top-user .profile { font-size: 11px; padding: 8px 12px; opacity: 1; }
+
+  .login-card > .brand {
+    width: 180px;
+    height: 180px;
+    margin-bottom: 16px;
+  }
 }
