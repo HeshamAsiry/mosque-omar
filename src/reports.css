@@ -1,102 +1,228 @@
-/* Reports page — spacing and visual hierarchy only */
+/* Reports page — professional UI/UX layer; business logic remains untouched */
 .reports-screen{
-  padding:30px!important;
+  position:relative;
+  overflow:hidden;
+  padding:34px!important;
+  background:linear-gradient(180deg,var(--ui-surface) 0%,var(--ui-surface) 72%,var(--ui-surface-2) 100%)!important;
+}
+
+.reports-screen::before{
+  content:"";
+  position:absolute;
+  inset:0 0 auto 0;
+  height:5px;
+  background:var(--ui-primary);
+  opacity:.9;
 }
 
 .reports-screen .panel-head{
-  margin-bottom:24px!important;
+  margin:4px 0 30px!important;
+  padding-bottom:22px;
+  border-bottom:1px solid var(--ui-border);
 }
 
+.reports-screen .panel-head h2{
+  font-size:27px!important;
+  letter-spacing:-.3px;
+}
+
+.reports-screen .panel-head p{
+  margin-top:8px!important;
+  max-width:650px;
+  line-height:1.9;
+}
+
+/* Statistics are presented as two clear visual groups. */
 .reports-screen > .stats{
+  grid-template-columns:repeat(4,minmax(0,1fr));
   gap:18px!important;
-  margin-top:18px!important;
+  margin-top:0!important;
 }
 
 .reports-screen > .stats + .stats{
-  margin-top:20px!important;
+  margin-top:18px!important;
+  padding-top:18px;
+  border-top:1px dashed var(--ui-border);
 }
 
 .reports-screen .stat{
-  min-height:112px!important;
-  padding:21px 22px!important;
-  justify-content:center;
+  position:relative;
+  min-height:124px!important;
+  padding:22px 24px!important;
+  justify-content:space-between;
+  background:rgba(255,253,249,.92)!important;
+  border-radius:16px!important;
+  box-shadow:0 4px 16px rgba(47,38,24,.045)!important;
+  transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;
 }
 
-.reports-screen .stat + .stat{
-  /* Prevent the cards from visually merging on tighter layouts. */
+.reports-screen .stat::after{
+  content:"";
+  position:absolute;
+  right:0;
+  top:18px;
+  bottom:18px;
+  width:3px;
+  border-radius:3px 0 0 3px;
+  background:var(--ui-border-strong);
 }
 
+.reports-screen .stat:hover{
+  transform:translateY(-2px);
+  box-shadow:0 10px 24px rgba(47,38,24,.09)!important;
+  border-color:var(--ui-border-strong)!important;
+}
+
+.reports-screen .stat span{
+  font-size:13px!important;
+  line-height:1.7;
+}
+
+.reports-screen .stat strong{
+  font-size:27px!important;
+  line-height:1.25;
+}
+
+/* The print actions become a distinct action zone instead of blending with stats. */
 .reports-screen .report-actions{
-  display:flex!important;
-  flex-wrap:wrap!important;
-  gap:14px!important;
-  margin-top:26px!important;
-  padding-top:22px!important;
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:16px!important;
+  margin-top:30px!important;
+  padding:24px 0 4px!important;
   border-top:1px solid var(--ui-border)!important;
 }
 
 .reports-screen .report-actions button{
-  min-width:220px;
-  flex:1 1 220px;
+  width:100%;
+  min-width:0!important;
+  min-height:56px!important;
+  border-radius:14px!important;
+  font-size:15px!important;
+  box-shadow:0 5px 14px rgba(47,38,24,.07)!important;
 }
 
+.reports-screen .report-actions .secondary{
+  background:var(--ui-surface-2)!important;
+  border-color:var(--ui-border-strong)!important;
+}
+
+.reports-screen .report-actions button:hover{
+  transform:translateY(-1px);
+}
+
+/* Review block gets the visual weight of an actual action item. */
 .reports-screen .review-alert{
-  margin-top:20px!important;
-  padding:18px 20px!important;
-  border-radius:14px!important;
-  line-height:1.9!important;
+  margin-top:22px!important;
+  padding:20px 22px!important;
+  border-radius:16px!important;
+  line-height:1.95!important;
+  border:1px solid var(--ui-border-strong)!important;
+  box-shadow:var(--ui-shadow-sm)!important;
 }
 
 .reports-screen .review-alert b{
   display:block;
-  margin-bottom:8px!important;
+  margin-bottom:10px!important;
+  font-size:15px;
 }
 
+.reports-screen .review-alert div{
+  padding:8px 0;
+  border-top:1px solid rgba(205,195,171,.55);
+}
+
+/* Total is intentionally the final visual anchor of the report summary. */
 .reports-screen .dashboard-total{
-  margin-top:22px!important;
-  padding:18px 20px!important;
-  border:1px solid var(--ui-border)!important;
-  border-radius:14px!important;
-  background:var(--ui-surface-2)!important;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  margin-top:24px!important;
+  padding:20px 22px!important;
+  border:1px solid var(--ui-border-strong)!important;
+  border-radius:16px!important;
+  background:var(--ui-primary)!important;
+  color:var(--ui-surface)!important;
   line-height:1.8!important;
+  box-shadow:var(--ui-shadow-md)!important;
+  font-size:15px;
+}
+
+.reports-screen .dashboard-total b{
+  font-size:21px;
+  color:var(--ui-surface)!important;
+  white-space:nowrap;
+}
+
+@media(max-width:1050px){
+  .reports-screen > .stats{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
 }
 
 @media(max-width:760px){
   .reports-screen{
-    padding:18px!important;
+    padding:20px!important;
   }
 
   .reports-screen .panel-head{
-    margin-bottom:18px!important;
+    margin:2px 0 22px!important;
+    padding-bottom:18px;
+  }
+
+  .reports-screen .panel-head h2{
+    font-size:23px!important;
   }
 
   .reports-screen > .stats{
-    gap:10px!important;
-    margin-top:14px!important;
+    grid-template-columns:1fr 1fr;
+    gap:12px!important;
   }
 
   .reports-screen > .stats + .stats{
     margin-top:14px!important;
+    padding-top:14px;
   }
 
   .reports-screen .stat{
-    min-height:96px!important;
-    padding:16px!important;
+    min-height:108px!important;
+    padding:17px!important;
+  }
+
+  .reports-screen .stat strong{
+    font-size:22px!important;
   }
 
   .reports-screen .report-actions{
-    gap:10px!important;
-    margin-top:20px!important;
+    grid-template-columns:1fr;
+    gap:11px!important;
+    margin-top:22px!important;
     padding-top:18px!important;
   }
 
   .reports-screen .report-actions button{
-    min-width:0;
-    flex-basis:100%;
+    min-height:52px!important;
   }
 
   .reports-screen .review-alert,
   .reports-screen .dashboard-total{
-    margin-top:16px!important;
+    margin-top:17px!important;
+  }
+
+  .reports-screen .dashboard-total{
+    align-items:flex-start;
+    flex-direction:column;
+    gap:4px;
+  }
+}
+
+@media(max-width:430px){
+  .reports-screen > .stats{
+    grid-template-columns:1fr;
+  }
+
+  .reports-screen .stat{
+    min-height:94px!important;
   }
 }
