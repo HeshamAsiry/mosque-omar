@@ -25,5 +25,15 @@ function MonthlyPayments({cases,amounts}){const today=monthStart(new Date()),[mo
   s = s.slice(0, start) + fn + s.slice(start);
 }
 
+if (!s.includes('function PaymentHistory({caseId}){')) {
+  const start = s.indexOf(marker);
+  const fn = `function PaymentHistory({caseId}){const[rows,setRows]=useState([]);useEffect(()=>{supabase.from('monthly_payments').select('month,paid,paid_at').eq('case_id',caseId).order('month',{ascending:false}).limit(6).then(({data})=>setRows(data||[]))},[caseId]);const current=monthKey(new Date()),m1=shiftMonth(current,-1),m2=shiftMonth(current,-2),paid1=rows.some(x=>x.month===m1&&x.paid),paid2=rows.some(x=>x.month===m2&&x.paid);return <div className="payment-history"><div className="payment-history-head"><b>سجل القبض</b>{!paid1&&!paid2&&<span>⚠️ لم يقبض شهرين متتاليين</span>}</div><div className="payment-history-list">{rows.length===0?<small>لا يوجد سجل قبض بعد.</small>:rows.map(x=><div key={x.month}><span>{monthLabel(x.month)}</span><b className={x.paid?'history-paid':'history-unpaid'}>{x.paid?'✓ قبض':'✕ لم يقبض'}</b></div>)}</div></div>}
+`;
+  if (start >= 0) s = s.slice(0, start) + fn + s.slice(start);
+}
+
+const familyTag = `<div className="tag">{c.case_type==='aid'?'مساعدات':'كفالة أيتام'} · {c.status==='active'?'نشطة':'في الانتظار'} · {money(amount)}</div>`;
+if (s.includes(familyTag) && !s.includes('<PaymentHistory caseId={c.id}/>')) s = s.replace(familyTag, familyTag + '<PaymentHistory caseId={c.id}/>');
+
 fs.writeFileSync(path, s);
 console.log('Monthly payment tracking injected.');
