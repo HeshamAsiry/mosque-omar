@@ -1,3 +1,5 @@
+@import './ui-premium.css';
+
 /* ======================================================================
    الهوية البصرية — شعار التطبيق (يمين) + شعار المسجد (منتصف) + المستخدم (يسار)
    شعار المسجد يُستخدم في شاشة تسجيل الدخول والهيدر.
@@ -18,7 +20,6 @@
   background: url('../kafala logo dark.png') center / contain no-repeat;
 }
 
-/* لوجو المسجد داخل التصميم: نحافظ على اللوجو الأصلي وحجمه */
 .topbar-mosque-logo {
   position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
   width: 380px; height: 112px;
@@ -29,7 +30,6 @@
 .topbar-info { display: none; }
 .sidebar > .brand { display: none; }
 
-/* اللوجو الأول في شاشة تسجيل الدخول — كبير وواضح */
 .login-card > .brand {
   width: 220px;
   height: 220px;
