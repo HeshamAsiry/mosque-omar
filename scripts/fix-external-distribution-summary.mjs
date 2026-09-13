@@ -20,7 +20,7 @@ if (start >= 0 && end > start) {
   const tableEnd = fn.indexOf(noteMarker, tableStart);
 
   if (tableStart >= 0 && tableEnd > tableStart) {
-    const table = '<div className="distribution-table"><div><b>الفئة</b><b>النصيب لكل مستفيد</b></div><div><span><b>كل حالة مساعدات</b></span><span><b>{money(aidUnit)}</b></span></div><div><span><b>كل أيتام</b></span><span><b>{money(childUnit)}</b></span></div></div>';
+    const table = '<div className="distribution-table"><div><b>الفئة</b><b>النصيب لكل مستفيد</b></div><div><span><b>مساعدات</b></span><span><b>{money(aidUnit)}</b></span></div><div><span><b>ايتام</b></span><span><b>{money(childUnit)}</b></span></div></div>';
     fn = fn.slice(0, tableStart) + table + fn.slice(tableEnd);
   }
 
