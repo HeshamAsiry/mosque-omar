@@ -1,0 +1,102 @@
+/* Reports page — spacing and visual hierarchy only */
+.reports-screen{
+  padding:30px!important;
+}
+
+.reports-screen .panel-head{
+  margin-bottom:24px!important;
+}
+
+.reports-screen > .stats{
+  gap:18px!important;
+  margin-top:18px!important;
+}
+
+.reports-screen > .stats + .stats{
+  margin-top:20px!important;
+}
+
+.reports-screen .stat{
+  min-height:112px!important;
+  padding:21px 22px!important;
+  justify-content:center;
+}
+
+.reports-screen .stat + .stat{
+  /* Prevent the cards from visually merging on tighter layouts. */
+}
+
+.reports-screen .report-actions{
+  display:flex!important;
+  flex-wrap:wrap!important;
+  gap:14px!important;
+  margin-top:26px!important;
+  padding-top:22px!important;
+  border-top:1px solid var(--ui-border)!important;
+}
+
+.reports-screen .report-actions button{
+  min-width:220px;
+  flex:1 1 220px;
+}
+
+.reports-screen .review-alert{
+  margin-top:20px!important;
+  padding:18px 20px!important;
+  border-radius:14px!important;
+  line-height:1.9!important;
+}
+
+.reports-screen .review-alert b{
+  display:block;
+  margin-bottom:8px!important;
+}
+
+.reports-screen .dashboard-total{
+  margin-top:22px!important;
+  padding:18px 20px!important;
+  border:1px solid var(--ui-border)!important;
+  border-radius:14px!important;
+  background:var(--ui-surface-2)!important;
+  line-height:1.8!important;
+}
+
+@media(max-width:760px){
+  .reports-screen{
+    padding:18px!important;
+  }
+
+  .reports-screen .panel-head{
+    margin-bottom:18px!important;
+  }
+
+  .reports-screen > .stats{
+    gap:10px!important;
+    margin-top:14px!important;
+  }
+
+  .reports-screen > .stats + .stats{
+    margin-top:14px!important;
+  }
+
+  .reports-screen .stat{
+    min-height:96px!important;
+    padding:16px!important;
+  }
+
+  .reports-screen .report-actions{
+    gap:10px!important;
+    margin-top:20px!important;
+    padding-top:18px!important;
+  }
+
+  .reports-screen .report-actions button{
+    min-width:0;
+    flex-basis:100%;
+  }
+
+  .reports-screen .review-alert,
+  .reports-screen .dashboard-total{
+    margin-top:16px!important;
+  }
+}
