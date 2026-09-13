@@ -1,0 +1,129 @@
+/* Print layout fix: remove the hidden application flow so the report starts on page 1. */
+@media print {
+  html,
+  body {
+    width: 100% !important;
+    min-height: 0 !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+
+  #root {
+    width: 100% !important;
+    min-height: 0 !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* The dashboard/report screen must not reserve a blank page. */
+  .reports-screen {
+    display: none !important;
+  }
+
+  /* Keep only the actual printable report in the print flow. */
+  .print-sheet {
+    display: block !important;
+    visibility: visible !important;
+    position: absolute !important;
+    top: 0 !important;
+    right: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+    direction: rtl !important;
+    background: #fff !important;
+    color: #111 !important;
+    font-family: Arial, "Tahoma", sans-serif !important;
+    font-size: 18px !important;
+    line-height: 1.5 !important;
+  }
+
+  .print-sheet,
+  .print-sheet * {
+    visibility: visible !important;
+  }
+
+  .print-header {
+    margin: 0 0 8mm !important;
+    padding: 0 !important;
+    text-align: center !important;
+  }
+
+  .print-header h1 {
+    margin: 0 0 3mm !important;
+    font-size: 24px !important;
+    line-height: 1.25 !important;
+  }
+
+  .print-header p {
+    margin: 0 !important;
+    font-size: 16px !important;
+  }
+
+  .print-table {
+    width: 100% !important;
+    margin: 0 !important;
+    border-collapse: collapse !important;
+    table-layout: fixed !important;
+    font-size: 18px !important;
+    line-height: 1.4 !important;
+  }
+
+  .print-table th,
+  .print-table td {
+    padding: 5px 6px !important;
+    height: 30px !important;
+    border: 1.2px solid #111 !important;
+    text-align: center !important;
+    vertical-align: middle !important;
+  }
+
+  .print-table th {
+    font-weight: 700 !important;
+    white-space: nowrap !important;
+  }
+
+  .print-table .name {
+    text-align: right !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  .print-total {
+    margin: 6mm 0 0 !important;
+    padding: 6px 8px !important;
+    border: 1.2px solid #111 !important;
+    font-size: 19px !important;
+    line-height: 1.4 !important;
+    font-weight: 700 !important;
+    text-align: center !important;
+  }
+
+  .signature-cell {
+    width: 20% !important;
+  }
+
+  tr,
+  th,
+  td {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  .print-header,
+  .print-total {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  @page {
+    size: A4 landscape;
+    margin: 10mm;
+  }
+}
