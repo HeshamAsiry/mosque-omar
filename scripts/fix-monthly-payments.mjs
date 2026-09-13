@@ -2,6 +2,7 @@ import fs from 'node:fs';
 
 const path = 'src/main.jsx';
 let s = fs.readFileSync(path, 'utf8');
+if (!s.includes("import './monthly-payments.css';")) s = s.replace("import'./branding.css';", "import'./branding.css';import'./monthly-payments.css';");
 
 if (!s.includes("['payments','سجل الصرف','💰']")) {
   s = s.replace("['reports','التقارير','▤']", "['reports','التقارير','▤'],['payments','سجل الصرف','💰']");
