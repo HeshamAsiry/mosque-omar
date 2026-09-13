@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "node scripts/fix-dashboard-active-only.mjs && node scripts/fix-external-distribution-rounding.mjs && node scripts/fix-monthly-payments.mjs && node scripts/fix-monthly-payments-icon.mjs && node scripts/fix-payment-start.mjs && node scripts/fix-funds-system.mjs && node scripts/fix-funds-balance.mjs && node scripts/fix-reports-print.mjs && vite build",
+    "build": "node scripts/fix-dashboard-active-only.mjs && node scripts/fix-external-distribution-rounding.mjs && node scripts/fix-monthly-payments.mjs && node scripts/fix-monthly-payments-icon.mjs && node scripts/fix-payment-start.mjs && node scripts/fix-funds-system.mjs && node scripts/fix-funds-balance.mjs && node scripts/fix-reports-print.mjs && node scripts/fix-ui-polish.mjs && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -15,7 +15,7 @@
     "react-dom": "^19.1.1"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^5.0.4",
+    "@vitejs/plugin-react": "^5.0.0",
     "vite": "^8.2.2"
   }
 }
