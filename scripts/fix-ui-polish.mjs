@@ -6,6 +6,11 @@ let s=fs.readFileSync(path,'utf8');
 // Keep the fund page label Arabic-only so the sidebar never mixes Arabic and English.
 s=s.replace("['funds','الصندوق','Wallet']", "['funds','الصندوق المالي','▣']");
 
+// Load the reports-specific spacing layer once. The file contains presentation-only CSS.
+if(!s.includes("import './reports.css';")){
+  s=s.replace("import './styles.css';", "import './styles.css';import './reports.css';");
+}
+
 // Replace native browser alerts with a consistent RTL in-app alert dialog.
 if(!s.includes('window.__kafalaStyledAlert')){
   const inject=`
@@ -54,4 +59,4 @@ if(!window.__kafalaStyledAlert){
 }
 
 fs.writeFileSync(path,s);
-console.log('UI alert and Arabic fund label patched.');
+console.log('UI alert, reports spacing, and Arabic fund label patched.');
