@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "node scripts/fix-dashboard-active-only.mjs && node scripts/fix-external-distribution-rounding.mjs && node scripts/fix-monthly-payments.mjs && node scripts/fix-monthly-payments-icon.mjs && node scripts/fix-payment-start.mjs && node scripts/fix-funds-system.mjs && node scripts/fix-fund-details-and-delete.mjs && node scripts/fix-funds-balance.mjs && node scripts/fix-reports-print.mjs && node scripts/fix-ui-polish.mjs && vite build",
+    "build": "node scripts/fix-dashboard-active-only.mjs && node scripts/fix-external-distribution-rounding.mjs && node scripts/fix-monthly-payments.mjs && node scripts/fix-monthly-payments-icon.mjs && node scripts/fix-payment-start.mjs && node scripts/fix-funds-system.mjs && node scripts/fix-fund-details-and-delete.mjs && node scripts/fix-external-distribution-summary.mjs && node scripts/fix-funds-balance.mjs && node scripts/fix-reports-print.mjs && node scripts/fix-ui-polish.mjs && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
