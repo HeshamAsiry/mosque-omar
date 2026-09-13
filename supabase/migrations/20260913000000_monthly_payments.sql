@@ -3,7 +3,7 @@ create table if not exists public.monthly_payments(
   case_id uuid not null references public.cases(id) on delete cascade,
   month date not null,
   paid boolean not null default true,
-  paid_at timestamptz not null default now(),
+  paid_at timestamptz,
   paid_by uuid references auth.users(id),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
