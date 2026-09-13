@@ -4,7 +4,7 @@ const path = 'src/main.jsx';
 let s = fs.readFileSync(path, 'utf8');
 
 // Keep the allocation engine unchanged, but show the user the two unit amounts only:
-// one amount for every aid case and one amount for every eligible child.
+// one amount for every aid case and one amount for every orphan.
 const start = s.indexOf('function ExternalDistribution(');
 const end = s.indexOf('\ncreateRoot(', start);
 if (start >= 0 && end > start) {
@@ -20,7 +20,7 @@ if (start >= 0 && end > start) {
   const tableEnd = fn.indexOf(noteMarker, tableStart);
 
   if (tableStart >= 0 && tableEnd > tableStart) {
-    const table = '<div className="distribution-table"><div><b>الفئة</b><b>النصيب لكل مستفيد</b></div><div><span><b>كل حالة مساعدات</b></span><span><b>{money(aidUnit)}</b></span></div><div><span><b>كل طفل مكفول</b></span><span><b>{money(childUnit)}</b></span></div></div>';
+    const table = '<div className="distribution-table"><div><b>الفئة</b><b>النصيب لكل مستفيد</b></div><div><span><b>كل حالة مساعدات</b></span><span><b>{money(aidUnit)}</b></span></div><div><span><b>كل أيتام</b></span><span><b>{money(childUnit)}</b></span></div></div>';
     fn = fn.slice(0, tableStart) + table + fn.slice(tableEnd);
   }
 
