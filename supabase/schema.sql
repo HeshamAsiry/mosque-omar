@@ -18,3 +18,12 @@ create policy "users can read own profile" on public.profiles for select to auth
 alter publication supabase_realtime add table public.cases;alter publication supabase_realtime add table public.children;alter publication supabase_realtime add table public.amount_rules;alter publication supabase_realtime add table public.profiles;
 create or replace function public.is_child_eligible(p_gender child_gender,p_birth_date date) returns boolean language sql immutable as $$ select case when p_gender='female' then true else age(current_date,p_birth_date)<interval '18 years' end $$;
 create or replace function public.case_eligible_children(p_case_id uuid) returns bigint language sql stable as $$ select count(*) from public.children where case_id=p_case_id and public.is_child_eligible(gender,birth_date) $$;
+
+create table public.monthly_payments(id uuid primary key default gen_random_uuid(),case_id uuid not null references public.cases(id) on delete cascade,month date not null,paid boolean not null default true,paid_at timestamptz,paid_by uuid references auth.users(id),created_at timestamptz not null default now(),updated_at timestamptz not null default now(),constraint monthly_payments_case_month_unique unique(case_id,month));
+alter table public.monthly_payments enable row level security;
+create policy "authenticated users can read monthly payments" on public.monthly_payments for select to authenticated using(true);
+create policy "authenticated users can insert monthly payments" on public.monthly_payments for insert to authenticated with check(true);
+create policy "authenticated users can update monthly payments" on public.monthly_payments for update to authenticated using(true) with check(true);
+create policy "admins can delete monthly payments" on public.monthly_payments for delete to authenticated using(public.current_role()='admin');
+alter publication supabase_realtime add table public.monthly_payments;
+create index if not exists monthly_payments_case_month_idx on public.monthly_payments(case_id,month);
