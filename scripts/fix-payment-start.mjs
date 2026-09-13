@@ -20,6 +20,10 @@ s = s.replace(
   ".eq('case_id',caseId).gte('month',PAYMENT_START_MONTH).order('month',{ascending:false})"
 );
 
+const oldWarning = /useEffect\(\(\)=>\{const m1=shiftMonth\(currentMonth,-1\),m2=shiftMonth\(currentMonth,-2\);.*?\},\[rows,cases,currentMonth\]\);/;
+const newWarning = "useEffect(()=>{const completed=[];for(let d=new Date(PAYMENT_START_MONTH);d<monthStart(new Date());d.setMonth(d.getMonth()+1))completed.push(monthKey(d));if(completed.length<2){setWarning([]);return}const[m1,m2]=completed.slice(-2),paid1=new Set((rows||[]).filter(x=>x.month===m1&&x.paid).map(x=>x.case_id)),paid2=new Set((rows||[]).filter(x=>x.month===m2&&x.paid).map(x=>x.case_id));setWarning(cases.filter(c=>c.status==='active'&&new Date(c.created_at||0)<=new Date(m1+'T00:00:00')&&!paid1.has(c.id)&&!paid2.has(c.id)).sort((a,b)=>String(a.mother_name||'').localeCompare(String(b.mother_name||''),'ar',{sensitivity:'base'})))},[rows,cases,currentMonth]);";
+s = s.replace(oldWarning, newWarning);
+
 const dashboardMarker = 'function Dashboard({cases,amounts,select,go}){';
 if (!s.includes('function MonthlyPaymentDashboardWarning({cases}){')) {
   const i = s.indexOf(dashboardMarker);
