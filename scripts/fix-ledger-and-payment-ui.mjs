@@ -24,6 +24,18 @@ s=s.replace(
   "<td className={paid?'payment-amount paid':'payment-amount unpaid'}><strong>{money(caseAmount(c,amounts))}</strong></td><td><button disabled={busy} className={paid?'payment-toggle paid':'payment-toggle unpaid'}"
 );
 
+// Make the monthly totals themselves visually communicate money movement.
+s=s.replace(
+  '<article className="stat"><span>تم الصرف</span><strong>{money(paidTotal)}</strong></article><article className="stat"><span>لم يتم الصرف</span><strong>{money(unpaidTotal)}</strong></article>',
+  '<article className="stat payment-total-card paid"><span>تم الصرف</span><strong>{money(paidTotal)}</strong><small>خرج من رصيد المسجد</small></article><article className="stat payment-total-card unpaid"><span>لم يتم الصرف</span><strong>{money(unpaidTotal)}</strong><small>ما زال في رصيد المسجد</small></article>'
+);
+
+// Clarify that external distribution approval and actual receipt are separate.
+s=s.replace(
+  '<p>حدد الشهر ثم علّم الحالات التي تم صرف المساعدة لها. عدم القبض لا يُرحّل للشهر التالي.</p>',
+  '<p>اعتماد التوزيع الخارجي لا يعني القبض. حدّد يدويًا من قبض بالضغط على «تم القبض». عدم القبض لا يُرحّل للشهر التالي.</p>'
+);
+
 fs.writeFileSync(mainPath,s);
 
 const fundCss='src/styles.css';
@@ -53,12 +65,17 @@ const fundUi=`
 .payment-page .payment-table tbody tr.unpaid{background:#fff5f4}
 .payment-page .payment-table tbody tr.paid:hover{background:#e9f7ee}
 .payment-page .payment-table tbody tr.unpaid:hover{background:#ffebe9}
-.payment-page .payment-table .payment-amount.paid{color:#16713b}
-.payment-page .payment-table .payment-amount.unpaid{color:#b52f27}
+.payment-page .payment-table .payment-amount.paid{color:#16713b!important}
+.payment-page .payment-table .payment-amount.unpaid{color:#b52f27!important}
 .payment-page .payment-table .payment-amount strong{font-size:15px;font-weight:900;white-space:nowrap}
 .payment-page .payment-toggle{min-width:132px;font-size:12px;font-weight:800}
 .payment-page .payment-toggle.paid{border-color:#b9ddc5;background:#eaf7ee;color:#176f39}
 .payment-page .payment-toggle.unpaid{border-color:#efc2be;background:#fdeceb;color:#b52f27}
+.payment-page .payment-total-card.paid{background:#f0faf4;border:1px solid #bfe2cb}
+.payment-page .payment-total-card.paid span,.payment-page .payment-total-card.paid strong{color:#16713b}
+.payment-page .payment-total-card.unpaid{background:#fff3f2;border:1px solid #efc2be}
+.payment-page .payment-total-card.unpaid span,.payment-page .payment-total-card.unpaid strong{color:#b52f27}
+.payment-page .payment-total-card small{display:block;margin-top:5px;font-size:11px;font-weight:700;opacity:.78}
 @media(max-width:700px){.fund-history .payment-table,.payment-page .payment-table{min-width:760px}.fund-history .payment-table th,.fund-history .payment-table td,.payment-page .payment-table th,.payment-page .payment-table td{padding:10px 11px}}
 `;
 if(!f.includes('Final fund ledger table UI')) f+=fundUi;
